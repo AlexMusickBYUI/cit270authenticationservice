@@ -1,8 +1,29 @@
 const express = require('express'); // import Express library
-const app = express.application; // "App" constant = "application" method of express library (in this case that basically means to actuallly use the library)
+const bodyParser = require('body-parser'); //body-parser is middleware
+const port = 3000;
+const app = express(); // "App" constant = "application" method of express library (in this case that basically means to actuallly use the library)
 
-app.listen(3000, ()=>{console.log("listening...")}); //listen on port 3000 with (inline-defined) function () that executes (console.log("listening...")) when run.
+app.use(bodyParser.json()); // tell express to use bodyParser (call it before anything else happens on each request)
 
-app.get('/',(request,response)=>{response.send("Hello")}) 
+app.listen(port, ()=>{
+    console.log("listening... on port: "+port);
+});
+// The first parameter is the port to listen on. The second is a function (defined inline with arrow notation) that gets run when starting to listen.
+// This function runs just because that's what the syntax of app.listen for express is.
 
-//a change for testing git
+app.get('/',(request,response)=>{
+    response.send("Hello");
+});
+
+app.post('/login',(request,response)=>{
+    const loginRequest = request.body;
+    if (loginRequest.userName=='notreal_bob_jones@ams.net' && loginRequest.password=='aA1!aa'){
+        response.status(200);
+        console.log(loginRequest.userName);
+        response.send('Welcome');
+    } else {
+        response.status(401);
+        response.send('Unauthorized');
+        console.log(loginRequest.userName);
+    }
+});
