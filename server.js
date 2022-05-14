@@ -1,7 +1,11 @@
 const express = require('express'); // import Express library
 const bodyParser = require('body-parser'); //body-parser is middleware
 const port = 3000;
-const app = express(); // "App" constant = "application" method of express library (in this case that basically means to actuallly use the library)
+const app = express(); // express() returns the express application as an object, and that application object is assigned to const "app"
+const md5 = require('md5');
+require('redis');
+
+// const redisClient = redis.createClient();
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
@@ -15,17 +19,17 @@ app.get('/',(request,response)=>{
     response.send("Hello");
 });
 
-app.post('/login',(request,response)=>{
+app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
     const loginRequest = request.body;
-    if (loginRequest.userName=='notreal_bob_jones@ams.net' && loginRequest.password=='aA1!aa'){
+    // var userHashedPassword = md5(loginRequest.password);
+    // var redisHashedPassword = await redisClient.hGet('passwords', loginRequest.userName);
+    if (loginRequest.userName=='notreal_bob_jones@ams.net' && loginRequest.password=='aA1!aa') {
         response.status(200);
-        // console.log(loginRequest.userName);
         response.send('Welcome');
     } else {
         response.status(401);
         response.send('Unauthorized');
-        // console.log(loginRequest.userName);
     }
 });
-//This works the way it looks like it should, but the issue when it didn't work was that the header was missing.
+//This works the way it looks like it should, but the issue when it didn't work was that the header was missing from the incoming data.
 //For JSON, body-parser expects the header "content-type:application/json". In curl, you can add a header using -H "[header]".
