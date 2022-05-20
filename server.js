@@ -3,9 +3,18 @@ const bodyParser = require('body-parser'); //body-parser is middleware
 const port = 3000;
 const app = express(); // express() returns the express application as an object, and that application object is assigned to const "app"
 const md5 = require('md5');
-require('redis');
+const {createClient} = require('redis');
 
-// const redisClient = redis.createClient();
+const redisClient = createClient(
+    { 
+        socket:{
+            port:6379,
+            host:'127.0.0.1',
+        }
+    }
+);
+
+redisClient.connect();
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
@@ -20,16 +29,25 @@ app.get('/',(request,response)=>{
 });
 
 app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
-    const loginRequest = request.body;
-    // var userHashedPassword = md5(loginRequest.password);
-    // var redisHashedPassword = await redisClient.hGet('passwords', loginRequest.userName);
-    if (loginRequest.userName=='notreal_bob_jones@ams.net' && loginRequest.password=='aA1!aa') {
+    const redisHashedPassword = await redisClient.hGet('passwords', request.body.userName);
+    const userHashedPassword = md5(request.body.password);
+    if (redisHashedPassword == userHashedPassword) {
         response.status(200);
         response.send('Welcome');
+        console.log('ACCEPTED login request');
     } else {
         response.status(401);
         response.send('Unauthorized');
+        console.log('REJECTED login request');
     }
 });
-//This works the way it looks like it should, but the issue when it didn't work was that the header was missing from the incoming data.
-//For JSON, body-parser expects the header "content-type:application/json". In curl, you can add a header using -H "[header]".
+
+/* The above does the following:
+-Wait for a connection on /login
+-Connect to redis
+-Get the password from "passwords" key in redis, using the "userName" field of the request as the field for the redis hashmap. Assign that value to redisHashedPassword
+-set userHashedPassword equal to the md5 of the "password" field of the request
+-check if userHashedPassword matches redisHashedPassword
+-If True, send status 200 and message 'Welcome'
+-Else, send status 401 and message 'Unauthorized'
+*/
