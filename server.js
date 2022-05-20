@@ -14,11 +14,11 @@ const redisClient = createClient(
     }
 );
 
-redisClient.connect();
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
-app.listen(port, ()=>{
+app.listen(port, async ()=>{
+    await redisClient.connect();
     console.log("listening... on port: "+port);
 });
 // The first parameter is the port to listen on. The second is a function (defined inline with arrow notation) that gets run when starting to listen.
@@ -29,21 +29,21 @@ app.get('/',(request,response)=>{
 });
 
 app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
-    const redisHashedPassword = await redisClient.hGet('passwords', request.body.userName);
+    const redisHashedPassword = await redisClient.hmGet('passwords', request.body.userName);
     const userHashedPassword = md5(request.body.password);
     if (redisHashedPassword == userHashedPassword) {
         response.status(200);
         response.send('Welcome');
-        console.log('ACCEPTED login request');
+        // console.log('ACCEPTED login request');
     } else {
         response.status(401);
         response.send('Unauthorized');
-        console.log('REJECTED login request');
+        // console.log('REJECTED login request');
     }
 });
 
 /* The above does the following:
--Wait for a connection on /login
+-Wait for a post request on /login
 -Connect to redis
 -Get the password from "passwords" key in redis, using the "userName" field of the request as the field for the redis hashmap. Assign that value to redisHashedPassword
 -set userHashedPassword equal to the md5 of the "password" field of the request
