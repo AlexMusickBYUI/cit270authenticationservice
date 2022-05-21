@@ -51,3 +51,21 @@ app.post('/login', async(request,response)=>{ //the "post" here is referring to 
 -If True, send status 200 and message 'Welcome'
 -Else, send status 401 and message 'Unauthorized'
 */
+
+
+//!!THE BELOW CODE DOESN'T WORK YET!!
+ 
+// app.post('/signup', async(request,response) => {
+//     console.log(request.body);
+//     const redisHashedPassword = await redisClient.hGet('passwords', signupRequest.userName);
+//     if (typeof(redisHashedPassword) == 'string') {
+//         console.log('REJECTED signup request (username already exists)');
+//         response.status(401);
+//         response.send('User already exists')
+//     } else {
+//         const userHashedPassword = md5(signupRequest.password);
+//         await redisClient.hmSet('passwords', signupRequest.userName, userHashedPassword);
+//         response.status(200);
+//         response.send('Account created succesfully');
+//     }
+// });
