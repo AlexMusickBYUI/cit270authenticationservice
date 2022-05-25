@@ -30,7 +30,7 @@ app.get('/',(request,response)=>{
 
 app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
     const redisHashedPassword = await redisClient.hmGet('passwords', request.body.userName);
-    const userHashedPassword = md5(request.body.password);
+    const userHashedPassword = md5(request.body.password); //Client sends password in cleartext
     if (redisHashedPassword == userHashedPassword) {
         response.status(200);
         response.send('Welcome');
@@ -42,30 +42,22 @@ app.post('/login', async(request,response)=>{ //the "post" here is referring to 
     }
 });
 
-/* The above does the following:
--Wait for a post request on /login
--Connect to redis
--Get the password from "passwords" key in redis, using the "userName" field of the request as the field for the redis hashmap. Assign that value to redisHashedPassword
--set userHashedPassword equal to the md5 of the "password" field of the request
--check if userHashedPassword matches redisHashedPassword
--If True, send status 200 and message 'Welcome'
--Else, send status 401 and message 'Unauthorized'
-*/
+app.post('/signup', async(request,response)=>{ 
+    const userExists = await redisClient.hExists('passwords', request.body.userName); //Returns 1 when exists, 0 when doesn't
+    const userHashedPassword = md5(request.body.password); //Client sends password as cleartext
 
-
-//!!THE BELOW CODE DOESN'T WORK YET!!
- 
-// app.post('/signup', async(request,response) => {
-//     console.log(request.body);
-//     const redisHashedPassword = await redisClient.hGet('passwords', signupRequest.userName);
-//     if (typeof(redisHashedPassword) == 'string') {
-//         console.log('REJECTED signup request (username already exists)');
-//         response.status(401);
-//         response.send('User already exists')
-//     } else {
-//         const userHashedPassword = md5(signupRequest.password);
-//         await redisClient.hmSet('passwords', signupRequest.userName, userHashedPassword);
-//         response.status(200);
-//         response.send('Account created succesfully');
-//     }
-// });
+    if ( userExists == 0 ) {
+        await redisClient.hSet('passwords', request.body.userName, userHashedPassword);
+        response.status(200);
+        response.send('Account Created');
+    } else if ( userExists == 1 ) {
+        response.status(401);
+        response.send('Account already exists.')
+    } else {
+        response.status(500);
+        response.send('Server error: could not create account');
+        console.log('/signup: Could not verify user existence.');
+        console.log('userExists:', userExists);
+        console.log('userName from client:', request.body.userName);
+    };
+});
