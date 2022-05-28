@@ -21,7 +21,7 @@ app.listen(port, async ()=>{
     await redisClient.connect();
     console.log("listening... on port: "+port);
 });
-// The first parameter is the port to listen on. The second is a function (defined inline with arrow notation) that gets run when starting to listen.
+// The first parameter above is the port to listen on. The second is a function (defined inline with arrow notation) that gets run when starting to listen.
 // This function runs just because that's what the syntax of app.listen for express is.
 
 app.get('/',(request,response)=>{
