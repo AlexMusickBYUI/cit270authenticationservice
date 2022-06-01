@@ -1,8 +1,10 @@
 const express = require('express'); // import Express library
 const bodyParser = require('body-parser'); //body-parser is middleware
 const port = 3000;
+const https = require('https')
 const app = express(); // express() returns the express application as an object, and that application object is assigned to const "app"
 const md5 = require('md5');
+const fs = require('fs')
 const {createClient} = require('redis');
 
 const redisClient = createClient(
@@ -17,12 +19,18 @@ const redisClient = createClient(
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
-app.listen(port, async ()=>{
-    await redisClient.connect();
-    console.log("listening... on port: "+port);
-});
-// The first parameter above is the port to listen on. The second is a function (defined inline with arrow notation) that gets run when starting to listen.
-// This function runs just because that's what the syntax of app.listen for express is.
+// app.listen(port, async ()=>{
+//     await redisClient.connect();
+//     console.log("listening... on port: "+port);
+// });
+
+https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert')
+  }, app).listen(port, () => {
+    console.log('Listening on port', port)
+  }
+);
 
 app.get('/',(request,response)=>{
     response.send("Hello");
