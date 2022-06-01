@@ -19,17 +19,14 @@ const redisClient = createClient(
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
-// app.listen(port, async ()=>{
-//     await redisClient.connect();
-//     console.log("listening... on port: "+port);
-// });
-
-https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert')
-  }, app).listen(port, () => {
-    console.log('Listening on port', port)
-  }
+https.createServer(
+    {
+        key: fs.readFileSync('server.key'),
+        cert: fs.readFileSync('server.cert')
+    }, app).listen(port, async () => {
+        await redisClient.connect();
+        console.log('Listening on port ' +port);
+    }
 );
 
 app.get('/',(request,response)=>{
