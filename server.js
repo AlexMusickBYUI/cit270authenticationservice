@@ -6,6 +6,7 @@ const md5 = require('md5');
 const fs = require('fs')
 const {createClient} = require('redis');
 
+// Priveleged port on Ubuntu, must either use root/sudo or change the port.
 const port = 443;
 
 const redisClient = createClient(
