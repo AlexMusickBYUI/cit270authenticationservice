@@ -24,7 +24,8 @@ app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it be
 https.createServer(
     {
         key: fs.readFileSync('server.key'),
-        cert: fs.readFileSync('server.cert')
+        cert: fs.readFileSync('server.cert'),
+        passphrase: 'P@ssw0rd'
     }, app).listen(port, async() => {
         await redisClient.connect();
         console.log('Listening on port ' +port);
