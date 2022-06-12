@@ -38,7 +38,7 @@ app.get('/',(request,response)=>{
 
 app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
     const redisHashedPassword = await redisClient.hmGet('passwords', request.body.userName);
-    const userHashedPassword = md5(request.body.password); //Client sends password in cleartext
+    const userHashedPassword = md5(request.body.password); //Client sends actual password, not hash
     if (redisHashedPassword == userHashedPassword) {
         response.status(200);
         response.send('Welcome');
@@ -52,7 +52,7 @@ app.post('/login', async(request,response)=>{ //the "post" here is referring to 
 
 app.post('/signup', async(request,response)=>{ 
     const userExists = await redisClient.hExists('passwords', request.body.userName); //Returns 1 when exists, 0 when doesn't
-    const userHashedPassword = md5(request.body.password); //Client sends password as cleartext
+    const userHashedPassword = md5(request.body.password); //Client sends actual password, not hash
 
     if ( userExists == 0 ) {
         await redisClient.hSet('passwords', request.body.userName, userHashedPassword);
