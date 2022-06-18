@@ -1,0 +1,1 @@
+scp ./server.cert ./server.key alex@musick.nodejs.cit270.com:/tmp
