@@ -9,14 +9,17 @@ const {createClient} = require('redis');
 // Priveleged port on Ubuntu, must either use root/sudo or change the port.
 const port = 443;
 
-const redisClient = createClient(
-    { 
-        socket:{
-            port:6379,
-            host:'127.0.0.1',
-        }
-    }
-);
+// Obviously the IP address here needs to be the accessible IP of the redis server.
+const redisClient = createClient({ url: 'redis://default:@10.128.0.4:6379', });
+
+// const redisClient = createClient(
+//     { 
+//         socket:{
+//             port:6379,
+//             host:'127.0.0.1',
+//         }
+//     }
+// );
 
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
