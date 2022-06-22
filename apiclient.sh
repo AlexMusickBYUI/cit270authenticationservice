@@ -1,1 +1,1 @@
-curl -k -d "@data.json" -X POST https://alex.cit270.com/login -H "content-type:application/json"
+curl -k -d "@data.json" -X POST https://musick-nodejs.cit270.com/login -H "content-type:application/json"
