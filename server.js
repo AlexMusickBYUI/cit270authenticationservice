@@ -37,6 +37,7 @@ https.createServer(
 
 app.get('/',(request,response)=>{
     response.send("Hello");
+    console.log("Connection on /");
 });
 
 app.post('/login', async(request,response)=>{ //the "post" here is referring to the request type expected, not the type that will be sent
