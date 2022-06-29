@@ -6,11 +6,14 @@ const md5 = require('md5');
 const fs = require('fs')
 const {createClient} = require('redis');
 
-// Priveleged port on Ubuntu, must either use root/sudo or change the port.
+// Priveleged port on Ubuntu, must either use root/sudo, change the port, or allow the port:
+// sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which node)) .
+// That last "." is indeed part of the command.
+// Full discloure, I don't fully understand what this does so don't blame me if something goes awry.
 const port = 443;
 
 // Obviously the IP address here needs to be the accessible IP of the redis server.
-const redisClient = createClient({ url: 'redis://default:@10.128.0.4:6379', });
+const redisClient = createClient({ url: 'redis://default:@34.132.236.17:6379', });
 
 // const redisClient = createClient(
 //     { 
