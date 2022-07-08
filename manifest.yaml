@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: musick-cit270
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: musick-cit270
+  template:
+    metadata:
+      labels:
+        app: musick-cit270
+    spec:
+      containers:
+        - name: musick-cit270
+          image: alexmusick/cit270
+          command: ["npm"]
+          args: ["run","stard"]
+          ports:
+            - containerPort: 443
+          resources:
+            limits:
+              cpu: ".125"
+              memory: "500Mi"
+            requests:
+              cpu: ".1"
+              memory: "250Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 443
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 443
+            initialDelaySeconds: 3
+            periodSeconds: 3
