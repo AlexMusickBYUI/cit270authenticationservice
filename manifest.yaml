@@ -30,11 +30,25 @@ spec:
             httpGet:
               path: /
               port: 443
+              scheme: HTTPS
             initialDelaySeconds: 3
             periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /
               port: 443
+              scheme: HTTPS
             initialDelaySeconds: 3
             periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: musick-cit270-loadbalancer
+spec:
+  selector:
+    app: musick-cit270
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
