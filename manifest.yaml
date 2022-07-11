@@ -16,7 +16,7 @@ spec:
         - name: musick-cit270
           image: alexmusick/cit270
           command: ["npm"]
-          args: ["run","stard"]
+          args: ["run","start"]
           ports:
             - containerPort: 443
           resources:
