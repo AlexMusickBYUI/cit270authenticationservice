@@ -6,7 +6,7 @@ const md5 = require('md5');
 const fs = require('fs')
 const {createClient} = require('redis');
 
-// Priveleged port on Ubuntu, must either use root/sudo, change the port, or allow the port:
+// 443 is a priveleged port on Ubuntu, must either use root/sudo, change the port, or allow the port:
 // sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which node)) .
 // That last "." is indeed part of the command.
 // Full discloure, I don't fully understand what this does so don't blame me if something goes awry.
