@@ -10,7 +10,7 @@ const {createClient} = require('redis');
 // sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which node)) .
 // That last "." is indeed part of the command.
 // Full discloure, I don't fully understand what this does so don't blame me if something goes awry.
-const port = 443;
+const port = 3000;
 
 // Obviously the IP address here needs to be the accessible IP of the redis server.
 const redisClient = createClient({ url: 'redis://default:@34.132.236.17:6379', });
@@ -27,16 +27,21 @@ const redisClient = createClient({ url: 'redis://default:@34.132.236.17:6379', }
 
 app.use(bodyParser.json()); // tell express to use bodyParser.json() (call it before anything else happens on each request)
 
-https.createServer(
-    {
-        key: fs.readFileSync('server.key'),
-        cert: fs.readFileSync('server.cert'),
-        passphrase: 'P@ssw0rd'
-    }, app).listen(port, async() => {
-        await redisClient.connect();
-        console.log('Listening on port ' +port);
-    }
-);
+// https.createServer(
+//     {
+//         key: fs.readFileSync('server.key'),
+//         cert: fs.readFileSync('server.cert'),
+//         passphrase: 'P@ssw0rd'
+//     }, app).listen(port, async() => {
+//         await redisClient.connect();
+//         console.log('Listening on port ' +port);
+//     }
+// );
+
+app.listen(port, async()=>{
+    await redisClient.connect();
+    console.log('Listening in port: ',port);
+})
 
 app.get('/',(request,response)=>{
     response.send("Hello");
