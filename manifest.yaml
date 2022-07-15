@@ -52,25 +52,3 @@ spec:
   ports:
   - port: 80
     targetPort: 3000
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: alexmusick-cit270-ingress
-  namespace: default
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-cluster-issuer"
-spec:
-  tls:
-  - hosts:
-    - musick-nodejs.cit270.com
-    secretName: alexmusick-cit270-dev-tls
-  rules:
-  - host: musick-nodejs.cit270.com
-    http:
-      paths:
-      - backend:
-        serviceName: musick-cit270-loadbalancer
-        servicePort: 80
